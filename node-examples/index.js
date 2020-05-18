@@ -1,13 +1,20 @@
-var rect = require('./rectangle.js')
+var rect = require('./rectangle')
 
 function solveRect(l,b) {
     console.log("Solving for rectangle with l = " + l + "breadth = " + b);
-    if(l<=0 || b<=0) {
-        console.log("Rectangle dimensions should be greater than 0");
-    } else {
-        console.log("Area of rectangle is " + rect.area(l,b));
-        console.log("Peri of rectangle is " + rect.peri(l,b));
-    }
+    
+    rect(l,b,(err, rectangle) => {
+        if(err) {
+            console.log("Error: ", err.message);
+        } else {
+
+            console.log("Peri: " + rectangle.peri());
+            console.log("Area: " + rectangle.area());
+            
+        }
+    });
+
+    console.log("This is after call");
 }
 solveRect(2, 5)
 solveRect(3, 4)
