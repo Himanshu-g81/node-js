@@ -8,17 +8,32 @@ connect.then((db) => {
     console.log('Connected to database');
 
     var newDish = Dishes({
-        name: 'Pizza1',
+        name: 'Pizza1.1',
         description: 'pizza with tomato'
     });
 
     newDish.save()
     .then((dish)=> {
-        console.log(dish);
-        return Dishes.find({}).exec();
+        console.log('dish', dish);
+        return Dishes.findByIdAndUpdate(dish._id, {
+            $set: {description: 'Updated test'}
+            
+        }, {
+            new: true
+        }).exec();
     })
-    .then(() => {
-        
+    .then((dish) => {
+        console.log('dish after update: ', dish);
+        dish.comments.push({
+            rating: 5,
+            comment: `I ' m getting a sinking feeling!`,
+            author: 'Someone'
+        });
+
+        return dish.save();
+    })
+    .then((dish) => {
+        console.log('dish ', dish);
         return mongoose.connection.db.dropCollection('dishes');
     })
     .then(() => {
