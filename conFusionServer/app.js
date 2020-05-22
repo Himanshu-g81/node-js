@@ -6,6 +6,9 @@ var logger = require('morgan');
 
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
+var passport = require('passport');
+var authenticate = require('./authentication');
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,9 +18,11 @@ var promoRouter  = require('./routes/promoRouter');
 
 var mongoose = require('mongoose');
 
+var config = require('./config');
+
 const Dishes = require('./models/dishes');
 
-const url = 'mongodb://localhost:27017/conFusion';
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 
@@ -82,6 +87,8 @@ app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser('12345-67890-09876-12345'));
 //app.use(auth);
 
+// Removing sessions to include JWT
+/*
 app.use(session({
   name: 'session-id',
   secret: '12345=67890-09876-12345',
@@ -89,13 +96,19 @@ app.use(session({
   resave: false,
   store: new FileStore()
 }));
+*/
+
+app.use(passport.initialize());
+//app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+
+
 function auth_session(req, res, next) {
   console.log(req.signedCookies);
-  if(!req.session.user) {
+  if(!req.user) {
       var err = new Error('You are not authenticated!');
       res.setHeader('WWW-Authenticate', 'Basic');
       err.status = 403;
@@ -119,19 +132,12 @@ function auth_session(req, res, next) {
   }
 }*/
   else {
-    console.log(req.session.user);
-    if(req.session.user == 'authenticated') {
-      next();
-    } else {
-      var err = new Error('You are not authenticated!');
-      
-      err.status = 403;
-      return next(err);
-    }
+    next();
   }
 }
 
-app.use(auth_session);
+// Removing auth_session and added to each router based on requirement.
+// app.use(auth_session);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
