@@ -15,7 +15,7 @@ var usersRouter = require('./routes/users');
 var dishRouter  = require('./routes/dishRouter');
 var leaderRouter  = require('./routes/leaderRouter');
 var promoRouter  = require('./routes/promoRouter');
-
+var uploadRouter = require('./routes/uploadRouter');
 var mongoose = require('mongoose');
 
 var config = require('./config');
@@ -72,7 +72,13 @@ function auth(req, res, next) {
 }
 
 var app = express();
-
+app.all/*uset*/('*', (req, res, next) => {
+  if(req.secure) {
+    
+    return next();
+  }
+  res.redirect(307, 'https://'+req.hostname+':'+app.get('securePort')+req.url);
+});
 
 
 // view engine setup
@@ -145,6 +151,7 @@ app.use('/users', usersRouter);
 app.use('/dishes', dishRouter);
 app.use('/leaders', leaderRouter);
 app.use('/promo', promoRouter);
+app.use('/imageUpload', uploadRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
