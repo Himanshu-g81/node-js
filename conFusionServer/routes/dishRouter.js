@@ -25,7 +25,7 @@ dishRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put(authenticater.verifyUser, (req, res, next) => {
+.put(authenticater.verifyUser, authenticater.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end('Put operation not supported on /dishes');
 })
@@ -53,7 +53,7 @@ dishRouter.route('/:dishId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post(authenticater.verifyUser, (req, res, next) => {
+.post(authenticater.verifyUser, authenticater.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end('Post not defined for dish: ' + req.params.dishId);
 })
